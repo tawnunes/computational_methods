@@ -1,0 +1,35 @@
+---
+title: "Scientific Worflows and Good Pratices"
+author: "Tawane Nunes"
+date: '2022-07-07'
+output: html_document
+---
+
+# Scientific workflow
+
+>Reproducibility - for you, collegues, and community
+>Script based tools
+>Version control
+>Share methods
+>Peer review
+
+__Never create one single script with all the analysis__ 
+
+Ideally each scripts stars reading a particular input/data and ends writing results
+The first script will read and format the data, and the others have specific analisys. Needs to run the first one.
+
+It's advisable to never sabe the workspace, but if you have an object that thakes a lot to run you can save as _.rda_ using _save()_ and to load the object after you can use _load()_.
+
+#Each script
+
+1. A header containing whi, how, when, where, and why METADA
+
+2. Loading all package
+
+3. Reads needed data, is good to comment all steps.
+
+
+
+
+
+
