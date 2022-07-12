@@ -35,7 +35,7 @@ for (i in 1:length(files_path)) {
 
 # Understanding the object `comm`
 head(comm)
-dim(comm)
+dim(comm) # 97 sites and 56 species
 summary(comm)
 
 # Understanding the object `coord`
@@ -92,6 +92,7 @@ as.factor(envir$Sites)
 # if we just use as.factor, we don't do the conversion, let's do an assignment
 envir$Sites <- as.factor(envir$Sites)
 
+
 # Let's do the same for the `Sites` variable of the `coord` object.
 coord$Sites <- as.factor(coord$Sites)
 
@@ -121,7 +122,12 @@ n_sp <- nrow(splist)
 n_sp
 
 # creating table with each species in each area species in rows
-comm_df <- tidyr::pivot_longer(comm, cols = 2:ncol(comm), names_to = "TaxCode", values_to = "Abundance")
+comm_df <- tidyr::pivot_longer(comm,
+                               cols = 2:ncol(comm), #transposing all columns except the first that will reapeat
+                               names_to = "TaxCode",# name of column with the old column headers
+                               values_to = "Abundance")# name of the column with the values
+# pivot_longer get someting that is wider and converts in something longer
+# pivot_wide get something that is longer and converts in something wider
 
 # Let's check the object's header and dimensions.
 dim(comm_df)
@@ -136,9 +142,14 @@ head(comm_df)
 # Table `comm_df` and `splist`
 
 # First, let's add the species information contained in `splist` to `comm_df` using the `TaxCode` column.
-comm_sp <- merge(comm_df, splist, by = "TaxCode")
+
+comm_sp <- merge(comm_df,
+                 splist,
+                 by = "TaxCode")
 head(comm_sp)
-# same as: dplyr::left_join(comm_df, splist, by = "TaxCode)
+
+#same as:
+#comm_spjoin <- dplyr::left_join(comm_df, splist, by = "TaxCode") # result a tibble
 
 # Table `comm_sp` and `traits`
 
@@ -147,15 +158,21 @@ names(traits)
 # renaming the first element
 colnames(traits)[1] <- "TaxCode"
 
-comm_traits <- merge(comm_sp, traits, by = "TaxCode")
+comm_traits <- merge(comm_sp,
+                     traits,
+                     by = "TaxCode")
 head(comm_traits)
 
 # Table `comm_traits` and `envir_coord`
 
 # We are almost in the end, we will now bind the environmental data (already containing the coordinates) to the community table using the column `Sites`.
 
-comm_total <- merge(comm_traits, envir_coord, by = "Sites")
+comm_total <- merge(comm_traits,
+                    envir_coord,
+                    by = "Sites")
 head(comm_total)
+
+if (dir.exists("data/processed")) dir.create("data/processed")
 
 # Finally, we end our script writing the modified table. We will use the function `write.csv()`.
 write.csv(x = comm_total,

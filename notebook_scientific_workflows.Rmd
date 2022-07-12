@@ -26,10 +26,82 @@ It's advisable to never sabe the workspace, but if you have an object that thake
 
 2. Loading all package
 
-3. Reads needed data, is good to comment all steps.
+3. Reads needed data
 
+4. Coding a variable that will not change
 
+5. Is good to comment all steps
 
+6. Writing in the HD the result from each step
 
+7. The sxript must be able to be run in sequence from start to finish. (no repetitions, no lines out of order, no parenteheses or non-closing calls)
+
+8. You should be able to erase the workspace mid-session and rebuild
+
+9. Do not define functions inside script
+
+10. use concise and informative names and don't use names already taken
+
+11. If you copy and paste more than three times it's time to write a loop or a function
+
+# Hands on
+
+Data of plant community
+
+Listing all files in the path and saving in an object
+
+```{r}
+cestes_files <- list.files(path = "data/raw/cestes",
+                           pattern = "csv$",
+                           full.names = TRUE)
+```
+
+Getting the names of the arquives automatically without .csv using __gsub()__
+
+```{r}
+cestes_names <- gsub(".csv", "", basename(cestes_files), fixed = TRUE)
+
+envir <- read.csv(cestes_files[3])
+```
+
+Creating a loop to read all the csv files
+
+```{r}
+
+data_list <- lapply(cestes_files, read.csv)
+
+#adding names with the vector created before with sfub
+names(data_list) <- cestes_names
+```
+
+Inspecting the data 
+
+```{r}
+length(data_list)
+
+# Inspecting data
+head(data_list$envir)
+dim(data_list$envir)
+summary(data_list$envir)
+```
+
+Creating summary table for all environmetal variables
+
+```{r}
+sd(envir$Clay)
+envir_mean <- apply(envir[, -1], 2, mean) # mean of each variable
+envir_sd <- apply(envir[, -1], 2, sd) # sd of each variable
+
+```
+
+Creating a function to standard deviation and if round is true it will round
+
+```{r}
+std <- function(x, round = FALSE, ...) { # the tree dots you can choose arguments for the function that is inside the function, in this case is round
+  std <- sd(x) / sqrt(length(x))
+  if (round) std <- round(std, ...) # here the three dots indicate that the argument will be defined in the major function
+  return(std)
+}
+```
 
 
