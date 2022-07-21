@@ -1,0 +1,112 @@
+---
+title: "Time-series"
+description: |
+author:
+  - name: Sara Mortara
+    affiliation: re.green | ¡liibre!
+    url: {}
+    orcid_id: 0000-0001-6221-7537
+  - name: Andrea Sánchez-Tapia
+    orcid_id: 0000-0002-3521-4338
+    affiliation: ¡liibre!
+    affiliation_url: {}
+    url: https://andreasancheztapia.netlify.app
+date: "2022-07-21"
+output:
+  distill::distill_article:
+    toc: true
+    theme: theme.css
+---
+
+In this exercise we will learn how to manipulate dates in R using the package __lubridate__. We will also use the package __zoo__ to calculate the rolling mean of a variable.
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(lubridate)
+library(zoo)
+```
+
+In our example, we will use Covid-19 data from Recife in Pernambuco, Brazil. 
+
+```{r, echo=FALSE, fig.align='center'}
+library(sf)
+library(tmap)
+br <- brazilmaps::get_brmap(geo = "State")
+pe <- br %>% filter(nome == "PERNAMBUCO")
+tm_shape(br) + tm_polygons() +
+  tm_shape(pe) + tm_polygons(col = "darkgrey")
+
+```
+
+This data was downloaded from the portal [Brasil.IO](https://brasil.io/). 
+
+```{r}
+covid <- read.csv("data/raw/covid19-dd7bc8e57412439098d9b25129ae6f35.csv")
+
+```
+
+## Converting into date format
+
+```{r}
+# First checking the class
+class(covid$date)
+# Changing to date format
+covid$date <- as_date(covid$date)
+# Checking the class
+class(covid$date)
+# Now we can make numeric operations
+range(covid$date)
+```
+
+## Plotting a time-series with __ggplot2__
+
+First, we will create a column containing the number of new cases. 
+
+
+```{r}
+ggplot(covid) +
+  geom_line(aes(x = date, y = new_confirmed)) +
+  theme_minimal()
+```
+
+Oops. We have negative cases and will substitute the negative values per zero. 
+
+```{r}
+covid$new_confirmed[covid$new_confirmed < 0] <- 0 
+```
+
+Let's try again.
+
+```{r}
+p <- ggplot(covid) +
+  geom_line(aes(x = date, y = new_confirmed), color = "grey30") +
+  labs(x = "Date", y = "New cases") +
+  theme_minimal()
+p
+```
+
+We can change the date axis in ggplot using the function `scale_x_date()`.
+
+```{r}
+p + scale_x_date(date_breaks = "4 months", date_labels = "%b-%y")
+
+```
+
+## Rolling mean with __zoo__ package
+
+We will use the function `rollmean()` from the __zoo__ package to calculate the rolling mean of the new cases for a 14 day interval.
+
+```{r}
+# Rolling mean
+covid$new_rollmean <- rollmean(x = covid$new_confirmed, k = 14, align = "right", 
+                               fill = NA)
+```
+
+Now, we will add a red line with the rolling mean. 
+
+```{r}
+p + scale_x_date(date_breaks = "4 months", date_labels = "%b-%y") +
+  geom_line(data = covid, aes(x = date, y = new_rollmean), color = "red")
+```
+
