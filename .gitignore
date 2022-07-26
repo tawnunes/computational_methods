@@ -7,3 +7,10 @@
 
 #avoid addind html
 *.html
+
+#all zip files
+*.zip
+
+#avoid the shapefile and raster
+data/shapefiles
+data/raster
