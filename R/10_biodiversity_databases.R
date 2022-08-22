@@ -106,6 +106,10 @@ write.csv(myrsine_new_tax,
           "data/processed/data_taxonomy_check.csv",
           row.names = FALSE)
 
+#loadin processed data
+
+#myrsine_data <- read.csv("./data/processed/data_taxonomy_check.csv")
+
 # Checking specie coordinates ----
 
 # First, inspect visually the coordinates in the raw data.
@@ -173,14 +177,17 @@ map(, , , add = TRUE)
 
 
 # HOMEWORK: Ploting with tmap and making an interactive map ----
+# Packages
 library(sf)
 library(tmap)
 
-myrsine_sf <- st_as_sf(myrsine_new_geo,
-                       coords = c("decimalLongitude",
-                                  "decimalLatitude"),
-                       crs=2163)
-
-
+# Creating a sf object
 geo.clean.sf <- myrsine_new_geo %>%
-  st_as_sf(coords = c("decimalLongitude", "decimalLatitude"), crs=2163)
+  st_as_sf(coords = c("decimalLongitude", "decimalLatitude"))
+
+
+tmap_mode("view") # interactive viewing
+geo.clean.sf %>%
+  tm_shape()+
+  tm_basemap()+
+  tm_dots()
