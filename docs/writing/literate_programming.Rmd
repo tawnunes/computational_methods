@@ -1,0 +1,29 @@
+---
+title: "Literate Programming"
+author: "Tawane Nunes"
+date: "2022-08-10"
+output: rmarkdown::github_document
+bibliography: AED.bib
+csl: journal-of-ecology.csl
+---
+
+The Rmarkdown can be used to write scientific documents. One of its features is to citate literature from _.bib_ files. To do this its necessary to have the .bib file containing your references and a _.csl_ file that contains the citation format. 
+
+Than you add in the YAML header the following information:
+
+
+__bibliography:__ ../filepath/literature-file.bib
+
+__csl:__ ../filepath/citation-style-file.csl
+
+
+Than to cite in the text you use __@__ and the format used by the reference manager that you used to creat the _.bib_ file, as:
+
+Citing @name_word_date or @namedate
+
+And the result shoul look like: @zuur_protocol_2010
+
+## References
+<div id="refs"></div>
+
+
